@@ -5,3 +5,30 @@ Content-Type: application/json
   "email": "user1@gmail.com",
   "password": "user1_12345"
 }
+
+### success
+POST http://localhost:3000/auth/local/signin
+Content-Type: application/json
+
+{
+  "email": "user1@gmail.com",
+  "password": "user1_12345"
+}
+
+### email error
+POST http://localhost:3000/auth/local/signin
+Content-Type: application/json
+
+{
+  "email": "user1@gmail.co",
+  "password": "user1_12345"
+}
+
+### password error
+POST http://localhost:3000/auth/local/signin
+Content-Type: application/json
+
+{
+  "email": "user1@gmail.com",
+  "password": "user1_1234"
+}
