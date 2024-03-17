@@ -37,14 +37,15 @@ export class AuthService {
 
   async updateRefreshToken(user_id: number, refreshToken: string) {
     const hash = await this.hashData(refreshToken);
-    await this.prisma.user.update({
+    const updataRefresh = await this.prisma.user.update({
       where: {
         id: user_id
       },
       data: {
-        refresh_token: refreshToken
+        refresh_token: hash
       }
     });
+    console.log(updataRefresh);
   }
 
   async signUpLocal(dto: AuthDto): Promise<Tokens> {
@@ -77,9 +78,45 @@ export class AuthService {
 
   }
 
-  logoutLocal() {
+  async logoutLocal(id: number) {
+    // console.log(id);
+    if (!id) throw new ForbiddenException("Not Authorized");
+
+    const user = await this.prisma.user.update({
+      where: {
+        id
+        // refresh_token: { not: null }
+      },
+      data: {
+        refresh_token: null
+      }
+    });
+    return "User : " + user.email + " Success Logout";
   }
 
-  refreshLocal() {
+  async refreshLocal(
+    id: number,
+    refresh_token: string) {
+    if (!id) throw new ForbiddenException("Not Authorized");
+
+    const user = await this.prisma.user.findUnique({
+      where: { id }
+    });
+
+    if (!user) throw new ForbiddenException("user not found");
+
+    // console.table({ refresh_token, data: user.refresh_token });
+    const isValid = await bcrypt.compare(refresh_token, user.refresh_token);
+    // console.log(user.refresh_token);
+    // console.log(refresh_token);
+    // console.log(isValid);
+    if (!isValid) throw new ForbiddenException("Invalid Refresh Token");
+
+    const token = await this.getToken(user.id, user.email);
+    await this.updateRefreshToken(user.id, token.refresh_token);
+    // console.log("success");
+    return token;
+
+
   }
 }

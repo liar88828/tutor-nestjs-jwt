@@ -32,3 +32,13 @@ Content-Type: application/json
   "email": "user1@gmail.com",
   "password": "user1_1234"
 }
+
+###
+POST http://localhost:3000/auth/logout
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsImVtYWlsIjoidXNlcjFAZ21haWwuY29tIiwiaWF0IjoxNzEwNjcwOTI2LCJleHAiOjE3MTA2NzE4MjZ9.TTan_QDaZiopiAZ__jjBwwu3nFSeDScSVZhETVgBj98
+
+###
+POST http://localhost:3000/auth/refresh
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsImVtYWlsIjoidXNlcjFAZ21haWwuY29tIiwiaWF0IjoxNzEwNjcyNjM0LCJleHAiOjE3MTEyNzc0MzR9.cs-qlvr-NeG971LC2XUzGhYtlFv7BH9TbG7VsOxU2yc
