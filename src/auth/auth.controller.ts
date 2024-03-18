@@ -1,10 +1,9 @@
-import { Body, Controller, HttpCode, HttpStatus, Post, Req, UseGuards } from "@nestjs/common";
+import { Body, Controller, HttpCode, HttpStatus, Post, UseGuards } from "@nestjs/common";
 import { AuthService } from "./auth.service";
 import { AuthDto } from "./dto";
 import { Tokens } from "./types";
-import { AuthGuard } from "@nestjs/passport";
-import { Request } from "express";
-import { JwtPayload } from "./strategies";
+import { AtGuard, RtGuard } from "./common/guards";
+import { GetCurrentUser, GetCurrentUserId } from "./common/decorator";
 
 @Controller("auth")
 export class AuthController {
@@ -25,25 +24,26 @@ export class AuthController {
     return this.authService.signInLocal(dto);
   }
 
-  @UseGuards(AuthGuard("jwt"))
+  @UseGuards(AtGuard)
   @Post("/logout")
   @HttpCode(HttpStatus.OK)
-  async logoutLocal(@Req() req: Request) {
-    const user = req.user as JwtPayload;
+  async logoutLocal(@GetCurrentUserId() id: number) {
+    // const user = req.user as JwtPayload;
     // console.log(user);
-    return this.authService.logoutLocal(user["sub"]);
+    return this.authService.logoutLocal(id);
 
   }
 
-  @UseGuards(AuthGuard("jwt-refresh"))
+  @UseGuards(RtGuard)
   @Post("/refresh")
   @HttpCode(HttpStatus.OK)
-  async refreshLocal(@Req() req: Request) {
-    const user = req.user as JwtPayload;
-    // console.log(user);
-    return this.authService.refreshLocal(
-      user["sub"],
-      user["refreshToken"]);
+  async refreshLocal(
+    @GetCurrentUserId() id: number,
+    @GetCurrentUser("refreshToken") refreshToken: string
+  ) {
+    // const user = req.user as JwtPayload;
+    console.log(id, refreshToken);
+    return this.authService.refreshLocal(id, refreshToken);
   }
 
 }
