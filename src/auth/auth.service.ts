@@ -103,7 +103,7 @@ export class AuthService {
       where: { id }
     });
 
-    if (!user) throw new ForbiddenException("user not found");
+    if (!user || !user.refresh_token) throw new ForbiddenException("user not found");
 
     // console.table({ refresh_token, data: user.refresh_token });
     const isValid = await bcrypt.compare(refresh_token, user.refresh_token);
